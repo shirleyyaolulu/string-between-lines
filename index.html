@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>弦外之音人格测评</title>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --card: #15151e;
+  --card2: #1c1c2a;
+  --primary: #a78bfa;
+  --primary2: #c4b5fd;
+  --accent: #f472b6;
+  --accent2: #fb923c;
+  --green: #34d399;
+  --red: #f87171;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --border: #2a2a3d;
+  --radius: 16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.container{max-width:680px;margin:0 auto;padding:16px;position:relative;z-index:1}
+.page{display:none}.page.active{display:block;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* Intro */
+.intro{text-align:center;padding:48px 0 24px}
+.intro .logo{font-size:64px;display:block;animation:float 3s ease-in-out infinite}
+.intro h1{font-size:32px;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:12px 0 4px}
+.intro .sub{font-size:15px;color:var(--text2);margin-bottom:4px}
+.intro .tag{font-size:11px;color:var(--primary);letter-spacing:3px;font-weight:600;margin-bottom:32px}
+.intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.intro-grid .gc{background:var(--card);border-radius:12px;padding:16px 12px;text-align:center;border:1px solid var(--border)}
+.gc .gi{font-size:24px;margin-bottom:6px;display:block}
+.gc .gt{font-size:13px;font-weight:700;color:var(--primary)}
+.gc .gd{font-size:11px;color:var(--text2);margin-top:4px;line-height:1.5}
+.info-box{background:var(--card);border-radius:var(--radius);padding:20px;margin-bottom:24px;border:1px solid var(--border)}
+.info-box h3{font-size:14px;font-weight:700;color:var(--primary);margin-bottom:10px}
+.info-box li{font-size:13px;color:var(--text2);line-height:1.7;padding:3px 0 3px 16px;position:relative;list-style:none}
+.info-box li::before{content:'';position:absolute;left:0;top:10px;width:6px;height:6px;border-radius:50%;background:var(--primary)}
+.btn{display:block;width:100%;padding:16px;font-size:16px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--primary),var(--accent));border:none;border-radius:var(--radius);cursor:pointer;font-family:inherit;transition:all .2s;letter-spacing:1px}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(167,139,250,.25)}
+.btn:active{transform:translateY(0)}
+
+/* Quiz */
+.prog-bar{position:sticky;top:0;background:rgba(10,10,15,.92);backdrop-filter:blur(8px);padding:12px 0 10px;z-index:100}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.prog-top span{font-size:12px;color:var(--text2)}
+.prog-top .pn{color:var(--primary);font-weight:700}
+.prog-track{width:100%;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:2px;transition:width .35s ease}
+.q-card{background:var(--card);border-radius:var(--radius);padding:24px 20px;margin-bottom:16px;border:1px solid var(--border);animation:fadeUp .35s ease}
+.q-cat{display:inline-block;padding:4px 10px;border-radius:16px;font-size:11px;font-weight:700;margin-bottom:14px;letter-spacing:1px}
+.cat-work{background:rgba(52,211,153,.12);color:var(--green)}.cat-love{background:rgba(244,114,182,.12);color:var(--accent)}.cat-family{background:rgba(251,146,60,.12);color:var(--accent2)}.cat-social{background:rgba(167,139,250,.12);color:var(--primary)}
+.q-scene{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px;padding:12px;background:var(--card2);border-radius:10px;border-left:3px solid var(--primary)}
+.q-quote{font-size:17px;font-weight:700;line-height:1.6;margin-bottom:6px;padding-left:14px;border-left:3px solid var(--accent)}
+.q-ask{font-size:14px;color:var(--primary);margin-bottom:16px;font-weight:500}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:block;width:100%;padding:12px 14px;font-size:13px;color:var(--text);background:var(--card2);border:2px solid transparent;border-radius:10px;cursor:pointer;text-align:left;line-height:1.6;transition:all .15s;font-family:inherit}
+.opt:hover{border-color:var(--primary);background:rgba(167,139,250,.08)}
+.opt.sel{border-color:var(--primary);background:rgba(167,139,250,.12);font-weight:600}
+.nav-row{display:flex;gap:10px;margin-top:6px}
+.nav-btn{flex:1;padding:12px;font-size:14px;font-weight:600;border:none;border-radius:10px;cursor:pointer;transition:all .15s;font-family:inherit}
+.nav-btn:disabled{opacity:.35;cursor:not-allowed}
+.nb-next{background:linear-gradient(135deg,var(--primary),#7c3aed);color:#fff}
+.nb-next:hover:not(:disabled){box-shadow:0 4px 16px rgba(167,139,250,.3)}
+.nb-prev{background:var(--card);color:var(--primary);border:1px solid var(--border)}
+
+/* Result */
+.r-hero{text-align:center;padding:36px 0 20px}
+.r-emoji{font-size:56px;display:block;margin-bottom:8px;animation:float 2.5s ease-in-out infinite}
+.r-badge{display:inline-block;padding:10px 28px;border-radius:24px;font-size:28px;font-weight:900;letter-spacing:6px;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;margin-bottom:12px;box-shadow:0 8px 24px rgba(167,139,250,.3)}
+.r-title{font-size:20px;font-weight:900;margin-bottom:4px}
+.r-sub{font-size:14px;color:var(--text2);margin-bottom:4px}
+.r-rare{display:inline-block;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;background:rgba(251,146,60,.15);color:var(--accent2);animation:pulse 2s infinite;margin-bottom:24px}
+.r-card{background:var(--card);border-radius:var(--radius);padding:20px;margin-bottom:16px;border:1px solid var(--border)}
+.r-card h3{font-size:14px;font-weight:700;color:var(--primary);margin-bottom:12px}
+.r-card p{font-size:13px;line-height:1.8;color:var(--text2);margin-bottom:8px}
+.r-card p:last-child{margin-bottom:0}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag-item{padding:4px 12px;border-radius:16px;font-size:11px;font-weight:600;background:rgba(167,139,250,.12);color:var(--primary)}
+
+/* Radar chart */
+.radar-wrap{position:relative;width:100%;max-width:320px;margin:0 auto 16px}
+.radar-wrap canvas{width:100%!important;height:auto!important}
+
+/* Dimension bars */
+.dim-group{margin-bottom:12px}
+.dim-group:last-child{margin-bottom:0}
+.dim-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.dim-label span:first-child{color:var(--text2)}.dim-label span:last-child{color:var(--primary);font-weight:700}
+.dim-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.dim-fill{height:100%;border-radius:3px;transition:width .8s ease}
+
+/* Model scores */
+.model-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.model-icon{font-size:20px;min-width:28px;text-align:center}
+.model-info{flex:1}
+.model-name{font-size:12px;font-weight:700;color:var(--text)}
+.model-desc{font-size:11px;color:var(--text2)}
+.model-bar{width:60px;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.model-fill{height:100%;border-radius:3px}
+
+.btn-outline{display:block;width:100%;padding:14px;font-size:15px;font-weight:700;color:var(--primary);background:transparent;border:2px solid var(--primary);border-radius:var(--radius);cursor:pointer;font-family:inherit;transition:all .2s;margin-top:10px}
+.btn-outline:hover{background:var(--primary);color:#fff}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card2);color:var(--text);padding:10px 20px;border-radius:24px;font-size:13px;font-weight:500;z-index:9999;transition:transform .3s;border:1px solid var(--border)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@media(max-width:480px){
+  .container{padding:10px}
+  .intro h1{font-size:26px}
+  .intro .logo{font-size:48px}
+  .intro-grid{grid-template-columns:1fr}
+  .q-quote{font-size:15px}
+  .r-badge{font-size:22px;padding:8px 20px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- INTRO -->
+<div class="page active" id="pg-intro">
+  <div class="intro">
+    <span class="logo">👂</span>
+    <h1>弦外之音</h1>
+    <div class="sub">你听得懂人话吗？</div>
+    <div class="tag">SILLY BIG PERSONALITY TEST</div>
+  </div>
+  <div class="intro-grid">
+    <div class="gc"><span class="gi">📡</span><div class="gt">感知力</div><div class="gd">你的天线灵不灵？</div></div>
+    <div class="gc"><span class="gi">🧠</span><div class="gt">解码力</div><div class="gd">猜对了还是猜歪了？</div></div>
+    <div class="gc"><span class="gi">💥</span><div class="gt">情绪反应</div><div class="gd">听完你炸不炸？</div></div>
+    <div class="gc"><span class="gi">🎭</span><div class="gt">应对策略</div><div class="gd">你是装傻还是掀桌？</div></div>
+  </div>
+  <div class="info-box">
+    <h3>这测试在测什么</h3>
+    <ul>
+      <li>40 个日常场景，看你能不能听出话里有话</li>
+      <li>不是对错题——每个选项都暴露你的人格倾向</li>
+      <li>15 个维度、5 大模型，最后匹配你的弦外之音人格</li>
+      <li>16 种人格，从「聋者」到「大师」，总有一款适合你</li>
+      <li>约 8 分钟，建议在没人打扰你的时候做</li>
+    </ul>
+  </div>
+  <button class="btn" onclick="startQuiz()">开始测试</button>
+</div>
+
+<!-- QUIZ -->
+<div class="page" id="pg-quiz">
+  <div class="prog-bar">
+    <div class="prog-top"><span id="p-cat">职场暗语</span><span class="pn" id="p-num">1/40</span></div>
+    <div class="prog-track"><div class="prog-fill" id="p-fill" style="width:2.5%"></div></div>
+  </div>
+  <div id="q-area"></div>
+  <div class="nav-row">
+    <button class="nav-btn nb-prev" id="nb-prev" onclick="prevQ()" disabled>上一题</button>
+    <button class="nav-btn nb-next" id="nb-next" onclick="nextQ()" disabled>下一题</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="page" id="pg-result"><div id="r-area"></div></div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// QUESTIONS - 40 scenarios, each option scores on 15 dimensions
+// Dimensions: P1,P2,P3, D1,D2,D3, E1,E2,E3, R1,R2,R3, S1,S2,S3
+// Score range per dimension per question: 0-3
+// ============================================================
+const Q = [
+// ===== 职场 (10) =====
+{cat:"work",catN:"职场暗语",
+ scene:"周一开会，你提了一个方案。领导听完后说：",
+ quote:"嗯，这个想法很大胆，你再想想。",
+ ask:"你的第一反应是？",
+ opts:[
+  {t:"领导在夸我有创意，回去继续完善",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"「大胆」不是好词，这方案基本被毙了",s:{P1:3,P2:2,P3:3,D1:3,D2:2,D3:0,E1:2,E2:1,E3:1,R1:0,R2:0,R3:0,S1:3,S2:0,S3:0}},
+  {t:"听出来了但装没听懂，笑着说「好的领导我再优化」",s:{P1:3,P2:2,P3:2,D1:2,D2:2,D3:0,E1:3,E2:1,E3:0,R1:0,R2:3,R3:0,S1:3,S2:0,S3:0}},
+  {t:"当场追问「您觉得哪里需要改？」把话挑明",s:{P1:2,P2:1,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:3,R2:0,R3:2,S1:2,S2:0,S3:0}}
+ ]},
+{cat:"work",catN:"职场暗语",
+ scene:"你向同事请教问题，同事说：",
+ quote:"这个嘛……你可以看看文档，写得挺清楚的。",
+ ask:"你怎么理解？",
+ opts:[
+  {t:"文档确实有，谢谢提醒，去翻文档",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:1,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"这是在嫌我问的问题太low了",s:{P1:3,P2:2,P3:2,D1:3,D2:1,D3:0,E1:1,E2:1,E3:2,R1:0,R2:0,R3:0,S1:3,S2:0,S3:0}},
+  {t:"管TA什么意思，反正我继续问到懂为止",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:0,E1:3,E2:0,E3:0,R1:3,R2:0,R3:1,S1:1,S2:0,S3:0}},
+  {t:"感觉到了不耐烦，默默记住以后别问这人",s:{P1:2,P2:3,P3:2,D1:2,D2:1,D3:0,E1:1,E2:2,E3:2,R1:0,R2:2,R3:0,S1:2,S2:0,S3:0}}
+ ]},
+{cat:"work",catN:"职场暗语",
+ scene:"年底谈话，领导说：",
+ quote:"你今年进步很大，明年对你有更高的期望。",
+ ask:"你心里在想什么？",
+ opts:[
+  {t:"太好了，升职加薪有望！",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:3,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"翻译：今年不够好，明年得更卖命",s:{P1:3,P2:2,P3:3,D1:3,D2:2,D3:0,E1:1,E2:0,E3:1,R1:0,R2:0,R3:0,S1:3,S2:0,S3:0}},
+  {t:"不管真假，先说「谢谢领导栽培」准没错",s:{P1:2,P2:1,P3:1,D1:1,D2:1,D3:0,E1:2,E2:0,E3:0,R1:0,R2:3,R3:0,S1:2,S2:0,S3:0}},
+  {t:"听完回去焦虑一晚上：到底是表扬还是警告？",s:{P1:2,P2:2,P3:2,D1:2,D2:3,D3:1,E1:0,E2:1,E3:3,R1:0,R2:0,R3:0,S1:2,S2:0,S3:0}}
+ ]},
+{cat:"work",catN:"职场暗语",
+ scene:"你申请调部门，HR说：",
+ quote:"目前那边编制比较紧张，你先安心做好现在的工作。",
+ ask:"你的解读是？",
+ opts:[
+  {t:"编制确实满了，等着就好",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"「安心」两个字就是让我别想了",s:{P1:3,P2:2,P3:3,D1:3,D2:1,D3:0,E1:2,E2:0,E3:0,R1:0,R2:0,R3:0,S1:3,S2:0,S3:0}},
+  {t:"心里明白被拒了，但表面说「好的了解」",s:{P1:3,P2:2,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:0,R2:3,R3:0,S1:3,S2:0,S3:0}},
+  {t:"直接问：「大概什么时候会有空位？」",s:{P1:2,P2:1,P3:2,D1:2,D2:0,D3:0,E1:2,E2:0,E3:0,R1:3,R2:0,R3:2,S1:2,S2:0,S3:0}}
+ ]},
+{cat:"work",catN:"职场暗语",
+ scene:"开会讨论你的方案，领导突然说：",
+ quote:"大家怎么看？都说说。",
+ ask:"你觉得接下来会发生什么？",
+ opts:[
+  {t:"大家会各抒己见，民主讨论",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"有人会出来唱反调，领导在借刀杀人",s:{P1:3,P2:2,P3:3,D1:3,D2:3,D3:0,E1:1,E2:1,E3:1,R1:0,R2:0,R3:0,S1:3,S2:0,S3:0}},
+  {t:"赶紧找盟友使眼色，让他们帮忙说好话",s:{P1:3,P2:3,P3:2,D1:2,D2:2,D3:0,E1:1,E2:0,E3:0,R1:0,R2:2,R3:0,S1:3,S2:0,S3:0}},
+  {t:"无所谓，方案好就行，怕什么讨论",s:{P1:1,P2:0,P3:0,D1:1,D2:0,D3:1,E1:3,E2:0,E3:0,R1:2,R2:0,R3:1,S1:1,S2:0,S3:0}}
+ ]},
+{cat:"work",catN:"职场暗语",
+ scene:"你加班到很晚，领导发微信：",
+ quote:"注意身体，别太晚了啊。",
+ ask:"你的反应是？",
+ opts:[
+  {t:"暖心！领导是真的关心我",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:2,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"翻译：我知道你在加班，很好，继续",s:{P1:3,P2:2,P3:2,D1:3,D2:1,D3:0,E1:1,E2:0,E3:1,R1:0,R2:0,R3:0,S1:3,S2:0,S3:0}},
+  {t:"回一句「快了快了」然后加班到更晚",s:{P1:1,P2:1,P3:1,D1:1,D2:0,D3:0,E1:2,E2:0,E3:0,R1:0,R2:2,R3:0,S1:1,S2:0,S3:0}},
+  {t:"想回「你也注意身体，别太晚发消息了」但忍住了",s:{P1:3,P2:2,P3:2,D1:2,D2:2,D3:0,E1:1,E2:0,E3:0,R1:1,R2:1,R3:3,S1:2,S2:0,S3:0}}
+ ]},
+{cat:"work",catN:"职场暗语",
+ scene:"领导在工作群发消息：",
+ quote:"最近几个项目质量参差不齐，大家反思一下。",
+ ask:"你看到这条消息的感受？",
+ opts:[
+  {t:"跟我没关系，我项目做得挺好的",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:1,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"知道是说谁的，但装作不知道",s:{P1:3,P2:2,P3:2,D1:3,D2:2,D3:0,E1:2,E2:1,E3:0,R1:0,R2:3,R3:0,S1:3,S2:0,S3:0}},
+  {t:"开始紧张，回忆自己的项目有没有问题",s:{P1:1,P2:1,P3:1,D1:1,D2:1,D3:2,E1:0,E2:1,E3:3,R1:0,R2:0,R3:0,S1:1,S2:0,S3:0}},
+  {t:"在群里第一个回「收到，会注意」争取表现",s:{P1:2,P2:1,P3:1,D1:1,D2:1,D3:0,E1:2,E2:0,E3:1,R1:0,R2:2,R3:0,S1:2,S2:0,S3:0}}
+ ]},
+{cat:"work",catN:"职场暗语",
+ scene:"你想请假，领导说：",
+ quote:"行吧，你自己安排好就行。",
+ ask:"你听出什么了？",
+ opts:[
+  {t:"同意了呀，开心请假去",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"「行吧」= 不太情愿，「自己安排」= 出了事你负责",s:{P1:3,P2:3,P3:3,D1:3,D2:2,D3:0,E1:1,E2:0,E3:1,R1:0,R2:0,R3:0,S1:3,S2:0,S3:0}},
+  {t:"听出不太高兴了，但假还是要请的",s:{P1:2,P2:2,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:2,R2:1,R3:0,S1:2,S2:0,S3:0}},
+  {t:"开始纠结要不要取消请假计划",s:{P1:2,P2:2,P3:1,D1:1,D2:1,D3:1,E1:0,E2:1,E3:3,R1:0,R2:0,R3:0,S1:1,S2:0,S3:0}}
+ ]},
+{cat:"work",catN:"职场暗语",
+ scene:"面试后HR打电话说：",
+ quote:"我们还在综合评估几位候选人，有消息第一时间通知你。",
+ ask:"你挂了电话后？",
+ opts:[
+  {t:"感觉挺有希望的，等通知",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:3,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"凉了，这就是标准拒绝话术",s:{P1:3,P2:2,P3:3,D1:3,D2:1,D3:0,E1:2,E2:0,E3:0,R1:0,R2:0,R3:0,S1:3,S2:0,S3:0}},
+  {t:"马上开始投其他公司，不把鸡蛋放一个篮子",s:{P1:2,P2:1,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:3,R2:0,R3:0,S1:2,S2:0,S3:0}},
+  {t:"接下来三天反复看手机，等到焦虑失眠",s:{P1:1,P2:1,P3:1,D1:1,D2:2,D3:2,E1:0,E2:0,E3:3,R1:0,R2:0,R3:0,S1:1,S2:0,S3:0}}
+ ]},
+{cat:"work",catN:"职场暗语",
+ scene:"同事聊天时说：",
+ quote:"你们部门最近招了不少人啊，业务发展挺快的？",
+ ask:"你觉得同事在干嘛？",
+ opts:[
+  {t:"随便聊聊天嘛，想多了",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:1,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"在打探情报——可能想转组，或者替别人来问",s:{P1:3,P2:2,P3:3,D1:3,D2:3,D3:0,E1:2,E2:0,E3:0,R1:0,R2:0,R3:0,S1:3,S2:0,S3:0}},
+  {t:"不管什么目的，笑着说「还行还行」就对了",s:{P1:2,P2:1,P3:1,D1:1,D2:1,D3:0,E1:2,E2:0,E3:0,R1:0,R2:3,R3:0,S1:2,S2:0,S3:0}},
+  {t:"反问回去「你们部门最近怎么样」，让对方先亮底牌",s:{P1:2,P2:2,P3:2,D1:2,D2:2,D3:0,E1:2,E2:0,E3:0,R1:2,R2:1,R3:2,S1:2,S2:0,S3:0}}
+ ]},
+
+// ===== 恋爱社交 (10) =====
+{cat:"love",catN:"恋爱社交",
+ scene:"约会结束，对方发消息说：",
+ quote:"今天好开心，你人真的很好。",
+ ask:"你心里的弹幕是？",
+ opts:[
+  {t:"对方也喜欢我！赶紧约下次",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:3,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:2,S3:0}},
+  {t:"「人很好」= 好人卡预警，没戏了",s:{P1:3,P2:2,P3:3,D1:3,D2:2,D3:0,E1:1,E2:1,E3:1,R1:0,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"不确定，但回一句「我也很开心」先稳住",s:{P1:1,P2:1,P3:1,D1:1,D2:1,D3:0,E1:2,E2:0,E3:0,R1:0,R2:2,R3:0,S1:0,S2:2,S3:0}},
+  {t:"立刻截图发给好朋友让帮忙分析",s:{P1:2,P2:1,P3:2,D1:1,D2:2,D3:1,E1:0,E2:0,E3:3,R1:0,R2:0,R3:0,S1:0,S2:2,S3:0}}
+ ]},
+{cat:"love",catN:"恋爱社交",
+ scene:"你表白，对方说：",
+ quote:"你这么优秀，肯定能找到更好的。",
+ ask:"你的反应？",
+ opts:[
+  {t:"TA是自卑吧？我要更努力追",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:3,E1:2,E2:2,E3:0,R1:2,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"最标准的婉拒话术，死心吧",s:{P1:3,P2:3,P3:3,D1:3,D2:1,D3:0,E1:2,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"笑着说「没事」，然后回家哭一场",s:{P1:2,P2:2,P3:2,D1:2,D2:1,D3:0,E1:0,E2:2,E3:2,R1:0,R2:2,R3:0,S1:0,S2:2,S3:0}},
+  {t:"直接说「我不需要更好的，我就要你」",s:{P1:1,P2:1,P3:0,D1:0,D2:0,D3:1,E1:2,E2:2,E3:0,R1:3,R2:0,R3:3,S1:0,S2:1,S3:0}}
+ ]},
+{cat:"love",catN:"恋爱社交",
+ scene:"暧昧期，对方突然说：",
+ quote:"我最近好忙，可能没太多时间聊天。",
+ ask:"你会？",
+ opts:[
+  {t:"好的，等TA忙完再找",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"翻译：对我没兴趣了，在软撤退",s:{P1:3,P2:3,P3:3,D1:3,D2:1,D3:0,E1:1,E2:0,E3:1,R1:0,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"表面说「好的没关系」，暗中观察TA有没有发朋友圈",s:{P1:3,P2:2,P3:2,D1:2,D2:2,D3:0,E1:1,E2:0,E3:2,R1:0,R2:2,R3:0,S1:0,S2:3,S3:0}},
+  {t:"直接问「是真忙还是不想聊了？」",s:{P1:2,P2:2,P3:2,D1:2,D2:0,D3:0,E1:2,E2:0,E3:0,R1:3,R2:0,R3:3,S1:0,S2:2,S3:0}}
+ ]},
+{cat:"love",catN:"恋爱社交",
+ scene:"朋友聚会上有人说：",
+ quote:"就你最自由了，单身多好啊！",
+ ask:"你心里的独白？",
+ opts:[
+  {t:"确实挺好的，单身自由万岁",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:1,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:1}},
+  {t:"这是在炫耀自己有对象吧？微笑但记住了",s:{P1:3,P2:2,P3:2,D1:2,D2:2,D3:0,E1:1,E2:0,E3:1,R1:0,R2:2,R3:1,S1:0,S2:2,S3:2}},
+  {t:"内心白眼，嘴上说「是啊羡慕吧」",s:{P1:2,P2:2,P3:2,D1:2,D2:1,D3:0,E1:1,E2:0,E3:0,R1:1,R2:1,R3:2,S1:0,S2:1,S3:2}},
+  {t:"有点受伤但不说出来",s:{P1:2,P2:2,P3:1,D1:1,D2:1,D3:0,E1:0,E2:2,E3:2,R1:0,R2:1,R3:0,S1:0,S2:1,S3:1}}
+ ]},
+{cat:"love",catN:"恋爱社交",
+ scene:"吵架后恋人说：",
+ quote:"算了，随便你吧，我不想吵了。",
+ ask:"你觉得？",
+ opts:[
+  {t:"TA想通了接受了，这事就过去了",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:3,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"「随便你」= 最大的不随便，TA已经寒心了",s:{P1:3,P2:3,P3:3,D1:3,D2:2,D3:0,E1:1,E2:3,E3:1,R1:0,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"这时候最好的选择是闭嘴，过两天再哄",s:{P1:2,P2:2,P3:2,D1:2,D2:2,D3:0,E1:2,E2:2,E3:0,R1:0,R2:2,R3:0,S1:0,S2:3,S3:0}},
+  {t:"继续说清楚——要吵就吵明白",s:{P1:1,P2:1,P3:1,D1:1,D2:0,D3:0,E1:1,E2:1,E3:0,R1:3,R2:0,R3:3,S1:0,S2:1,S3:0}}
+ ]},
+{cat:"love",catN:"恋爱社交",
+ scene:"你问恋人「我最近胖了吗？」，TA说：",
+ quote:"没有啊，我觉得你什么时候都好看。",
+ ask:"你怎么想？",
+ opts:[
+  {t:"好甜！TA真的觉得我好看",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:2,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"标准求生欲回答，TA肯定看到了但不敢说",s:{P1:3,P2:2,P3:2,D1:3,D2:2,D3:0,E1:2,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"不管是不是真话，听着舒服就行了",s:{P1:1,P2:1,P3:1,D1:1,D2:1,D3:0,E1:3,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:1,S3:0}},
+  {t:"继续追问「说实话！你是不是在骗我？」",s:{P1:2,P2:2,P3:2,D1:2,D2:1,D3:1,E1:0,E2:0,E3:2,R1:3,R2:0,R3:1,S1:0,S2:2,S3:0}}
+ ]},
+{cat:"love",catN:"恋爱社交",
+ scene:"很久没联系的人突然在朋友圈留言：",
+ quote:"好久不见，过得不错嘛！",
+ ask:"你的判断？",
+ opts:[
+  {t:"老朋友关心你，暖",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:2,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:1}},
+  {t:"有事要找你——卖保险/借钱/婚礼随份子",s:{P1:3,P2:2,P3:3,D1:3,D2:2,D3:0,E1:2,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:3}},
+  {t:"先淡定回复，看TA下一步出什么牌",s:{P1:2,P2:2,P3:2,D1:2,D2:2,D3:0,E1:2,E2:0,E3:0,R1:0,R2:2,R3:0,S1:0,S2:0,S3:2}},
+  {t:"不回。没事别找我",s:{P1:2,P2:1,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:2,R2:0,R3:2,S1:0,S2:0,S3:2}}
+ ]},
+{cat:"love",catN:"恋爱社交",
+ scene:"约好周末出去玩，朋友说：",
+ quote:"周末突然有点事，下次吧。",
+ ask:"「下次」是什么时候？",
+ opts:[
+  {t:"应该很快会重新约的",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:3,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"没有「下次」了，这是标准放鸽子话术",s:{P1:3,P2:2,P3:3,D1:3,D2:1,D3:0,E1:1,E2:0,E3:1,R1:0,R2:0,R3:0,S1:0,S2:1,S3:3}},
+  {t:"秒回「好的没事」，但心里小小失望",s:{P1:1,P2:1,P3:1,D1:1,D2:0,D3:0,E1:1,E2:1,E3:1,R1:0,R2:2,R3:0,S1:0,S2:0,S3:1}},
+  {t:"「行吧，那我另外约人了」——给点压力",s:{P1:2,P2:1,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:3,R2:0,R3:2,S1:0,S2:0,S3:2}}
+ ]},
+{cat:"love",catN:"恋爱社交",
+ scene:"你送了礼物给朋友，朋友说：",
+ quote:"你太客气了，下次真的别买了。",
+ ask:"你怎么理解？",
+ opts:[
+  {t:"TA真不想让我花钱，下次别买了",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"标准客套话，心里开心得很",s:{P1:3,P2:2,P3:2,D1:2,D2:1,D3:0,E1:2,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:1,S3:3}},
+  {t:"下次该买还是买，中国人的「别买了」不算数的",s:{P1:2,P2:2,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:2,R2:0,R3:0,S1:0,S2:0,S3:2}},
+  {t:"仔细观察TA的表情——如果笑着说的就是客气",s:{P1:3,P2:3,P3:2,D1:2,D2:2,D3:0,E1:2,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:2}}
+ ]},
+{cat:"love",catN:"恋爱社交",
+ scene:"刚认识一个人，对方说：",
+ quote:"加个微信吧，有空一起吃饭。",
+ ask:"你的预期？",
+ opts:[
+  {t:"会约的，等TA消息",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"十有八九不会有这顿饭，微信也会变僵尸好友",s:{P1:3,P2:2,P3:3,D1:3,D2:1,D3:0,E1:2,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:3}},
+  {t:"加了微信，但绝对不会主动约",s:{P1:2,P2:1,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:0,R2:2,R3:0,S1:0,S2:0,S3:2}},
+  {t:"「好啊，这周五怎么样？」当场钉死时间",s:{P1:1,P2:0,P3:1,D1:1,D2:0,D3:0,E1:2,E2:0,E3:0,R1:3,R2:0,R3:1,S1:0,S2:0,S3:1}}
+ ]},
+
+// ===== 家人长辈 (10) =====
+{cat:"family",catN:"家人长辈",
+ scene:"过年回家，亲戚问：",
+ quote:"在外面一个月能挣多少钱啊？",
+ ask:"你的内心活动？",
+ opts:[
+  {t:"长辈关心你嘛，如实告诉TA",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"在搜集八卦素材，回去跟全村人比较",s:{P1:3,P2:2,P3:3,D1:3,D2:2,D3:0,E1:1,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:3}},
+  {t:"笑着说「够花够花」，一分钱不透露",s:{P1:2,P2:2,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:0,R2:3,R3:0,S1:0,S2:2,S3:2}},
+  {t:"反问「叔/婶你们家去年收成怎么样？」",s:{P1:2,P2:1,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:2,R2:1,R3:2,S1:0,S2:1,S3:2}}
+ ]},
+{cat:"family",catN:"家人长辈",
+ scene:"妈妈在电话里说：",
+ quote:"你看你表姐，孩子都上幼儿园了。",
+ ask:"妈妈到底想说什么？",
+ opts:[
+  {t:"聊聊家常，分享表姐的消息",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"催婚催生的经典开场白",s:{P1:3,P2:3,P3:3,D1:3,D2:1,D3:0,E1:1,E2:1,E3:1,R1:0,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"假装信号不好：「妈？妈？听不到了啊」",s:{P1:3,P2:2,P3:2,D1:2,D2:1,D3:0,E1:1,E2:0,E3:0,R1:1,R2:3,R3:0,S1:0,S2:2,S3:0}},
+  {t:"直接怼「你要是想抱孙子你替我生」",s:{P1:2,P2:2,P3:2,D1:2,D2:1,D3:0,E1:0,E2:0,E3:0,R1:3,R2:0,R3:3,S1:0,S2:2,S3:0}}
+ ]},
+{cat:"family",catN:"家人长辈",
+ scene:"你换了工作，爸爸说：",
+ quote:"你自己决定就好，爸爸也不太懂你们年轻人。",
+ ask:"爸爸的真实心态？",
+ opts:[
+  {t:"尊重你的选择，给你自由",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"「不太懂」= 觉得不靠谱但说了你也不听",s:{P1:3,P2:2,P3:3,D1:3,D2:2,D3:0,E1:1,E2:2,E3:1,R1:0,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"听出了失落感——TA觉得自己帮不上忙",s:{P1:3,P2:3,P3:2,D1:2,D2:2,D3:0,E1:1,E2:3,E3:1,R1:0,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"安慰一句「爸你放心，我考虑好了」",s:{P1:2,P2:2,P3:1,D1:1,D2:1,D3:0,E1:2,E2:2,E3:0,R1:1,R2:1,R3:0,S1:0,S2:2,S3:0}}
+ ]},
+{cat:"family",catN:"家人长辈",
+ scene:"过年带了礼物回家，妈妈说：",
+ quote:"花这些钱干嘛，自己在外面好好的就行了。",
+ ask:"妈妈的心情是？",
+ opts:[
+  {t:"真的不需要这些，别浪费钱",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:2,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"嘴上说不要，心里比谁都开心",s:{P1:3,P2:3,P3:2,D1:3,D2:1,D3:0,E1:2,E2:3,E3:0,R1:0,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"心疼你在外面花钱，又感到欣慰",s:{P1:3,P2:3,P3:2,D1:2,D2:2,D3:0,E1:2,E2:3,E3:0,R1:0,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"随手再塞给她两千块加强效果",s:{P1:2,P2:2,P3:1,D1:2,D2:1,D3:0,E1:2,E2:2,E3:0,R1:2,R2:0,R3:0,S1:0,S2:2,S3:0}}
+ ]},
+{cat:"family",catN:"家人长辈",
+ scene:"很久没回家了，妈妈打电话：",
+ quote:"你忙就不用回来了，我跟你爸挺好的。",
+ ask:"你信吗？",
+ opts:[
+  {t:"信，他们确实不需要我操心",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:3,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"越说「不用回来」越是想你回去",s:{P1:3,P2:3,P3:3,D1:3,D2:1,D3:0,E1:1,E2:3,E3:1,R1:0,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"听完鼻子一酸，立刻订了下周的票",s:{P1:3,P2:3,P3:2,D1:2,D2:1,D3:0,E1:0,E2:3,E3:1,R1:3,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"说「好的，有空就回」然后继续忙",s:{P1:1,P2:1,P3:0,D1:0,D2:0,D3:1,E1:2,E2:0,E3:0,R1:0,R2:2,R3:0,S1:0,S2:1,S3:0}}
+ ]},
+{cat:"family",catN:"家人长辈",
+ scene:"带对象回家，妈妈悄悄跟你说：",
+ quote:"人挺好的，就是看着有点瘦。",
+ ask:"你的理解是？",
+ opts:[
+  {t:"妈妈想多给TA做好吃的，关心嘛",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:2,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"「人挺好的，但是」——「但是」后面才是重点",s:{P1:3,P2:3,P3:3,D1:3,D2:2,D3:0,E1:1,E2:1,E3:1,R1:0,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"总体OK的信号，长辈就是喜欢挑点小毛病",s:{P1:2,P2:2,P3:2,D1:2,D2:2,D3:0,E1:2,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:2,S3:0}},
+  {t:"不管她说什么，我喜欢就行",s:{P1:1,P2:0,P3:0,D1:0,D2:0,D3:0,E1:3,E2:0,E3:0,R1:2,R2:0,R3:1,S1:0,S2:1,S3:0}}
+ ]},
+{cat:"family",catN:"家人长辈",
+ scene:"你打了一天游戏，爸爸路过说：",
+ quote:"现在的游戏做得真好，画面这么漂亮。",
+ ask:"爸爸在？？？",
+ opts:[
+  {t:"对游戏画面产生了兴趣",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:3,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"最高级别的讽刺——你都废了一天了",s:{P1:3,P2:3,P3:3,D1:3,D2:2,D3:0,E1:1,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"我知道他在讽刺我，但我选择装听不懂",s:{P1:3,P2:3,P3:2,D1:2,D2:2,D3:0,E1:2,E2:0,E3:0,R1:0,R2:3,R3:0,S1:0,S2:3,S3:0}},
+  {t:"「要不你也来一把？」化讽刺为互动",s:{P1:2,P2:2,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:2,R2:1,R3:2,S1:0,S2:2,S3:0}}
+ ]},
+{cat:"family",catN:"家人长辈",
+ scene:"你说想养猫，妈妈说：",
+ quote:"你自己都照顾不好，还养什么猫。",
+ ask:"妈妈的重点是？",
+ opts:[
+  {t:"觉得你没能力养猫",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:1,E1:2,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"猫只是借口——她在心疼你没照顾好自己",s:{P1:3,P2:3,P3:2,D1:3,D2:2,D3:0,E1:2,E2:3,E3:0,R1:0,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"嘴硬心软，最后肯定帮你养",s:{P1:2,P2:2,P3:2,D1:2,D2:2,D3:0,E1:2,E2:2,E3:0,R1:0,R2:0,R3:0,S1:0,S2:2,S3:0}},
+  {t:"不管她怎么说，猫已经在路上了",s:{P1:1,P2:1,P3:1,D1:1,D2:0,D3:0,E1:3,E2:0,E3:0,R1:3,R2:0,R3:2,S1:0,S2:1,S3:0}}
+ ]},
+{cat:"family",catN:"家人长辈",
+ scene:"你说要去旅游，爸妈说：",
+ quote:"注意安全就行，钱够花吗？",
+ ask:"你怎么看这个问题？",
+ opts:[
+  {t:"正常关心嘛，告诉他们够就行",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:1,E1:3,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"这是在找理由给你转账——说「不够」就对了",s:{P1:3,P2:3,P3:3,D1:3,D2:2,D3:0,E1:2,E2:3,E3:0,R1:0,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"心一暖，说「够的别担心」然后偷偷红了眼眶",s:{P1:2,P2:3,P3:2,D1:2,D2:1,D3:0,E1:1,E2:3,E3:1,R1:0,R2:1,R3:0,S1:0,S2:3,S3:0}},
+  {t:"果断说「不够」然后收到转账，双赢",s:{P1:3,P2:2,P3:2,D1:3,D2:2,D3:0,E1:2,E2:1,E3:0,R1:3,R2:0,R3:1,S1:0,S2:2,S3:0}}
+ ]},
+{cat:"family",catN:"家人长辈",
+ scene:"奶奶听说你想辞职创业，说：",
+ quote:"有想法是好事，不过稳定最重要。",
+ ask:"奶奶的立场是？",
+ opts:[
+  {t:"支持你创业，提醒你注意风险",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"「不过」后面才是她的真心话——别折腾了",s:{P1:3,P2:2,P3:3,D1:3,D2:2,D3:0,E1:1,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:3,S3:0}},
+  {t:"理解她的担心，但创业还是要创的",s:{P1:2,P2:2,P3:2,D1:2,D2:1,D3:0,E1:2,E2:2,E3:0,R1:2,R2:0,R3:0,S1:0,S2:2,S3:0}},
+  {t:"点头说「好」然后该干嘛干嘛",s:{P1:2,P2:1,P3:1,D1:1,D2:1,D3:0,E1:2,E2:0,E3:0,R1:1,R2:2,R3:0,S1:0,S2:1,S3:0}}
+ ]},
+
+// ===== 日常客套 (10) =====
+{cat:"social",catN:"日常客套",
+ scene:"请朋友帮忙，朋友说：",
+ quote:"我尽量吧。",
+ ask:"你信几分？",
+ opts:[
+  {t:"TA会尽力的，等结果",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:3,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"「尽量」= 「大概率不会办」的软着陆",s:{P1:3,P2:2,P3:3,D1:3,D2:1,D3:0,E1:2,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:3}},
+  {t:"做好两手准备，这事不能只靠TA",s:{P1:2,P2:1,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:2,R2:0,R3:0,S1:0,S2:0,S3:2}},
+  {t:"追一句「大概什么时候能知道结果？」钉死TA",s:{P1:2,P2:1,P3:2,D1:2,D2:0,D3:0,E1:2,E2:0,E3:0,R1:3,R2:0,R3:2,S1:0,S2:0,S3:2}}
+ ]},
+{cat:"social",catN:"日常客套",
+ scene:"你做了饭请朋友吃，朋友说：",
+ quote:"你这手艺可以开餐厅了！",
+ ask:"你怎么看这评价？",
+ opts:[
+  {t:"我做得确实好吃！开心！",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"标准社交夸奖，就跟「你瘦了」一样自动化",s:{P1:3,P2:2,P3:2,D1:2,D2:2,D3:0,E1:2,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:3}},
+  {t:"不管是不是真话，被夸总是舒服的",s:{P1:1,P2:1,P3:0,D1:1,D2:0,D3:0,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:1}},
+  {t:"观察TA碗里还剩多少——行动比嘴巴诚实",s:{P1:3,P2:3,P3:2,D1:3,D2:2,D3:0,E1:2,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:3}}
+ ]},
+{cat:"social",catN:"日常客套",
+ scene:"搬了新家，邻居说：",
+ quote:"有什么需要帮忙的随时说啊。",
+ ask:"你信吗？",
+ opts:[
+  {t:"人好好！以后有事可以找TA",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:3,E1:3,E2:1,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"「随时说」= 「千万别来找我」的礼貌版",s:{P1:3,P2:2,P3:3,D1:3,D2:1,D3:0,E1:2,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:3}},
+  {t:"客气归客气，以后真有事还是会看情况",s:{P1:2,P2:1,P3:2,D1:2,D2:2,D3:0,E1:2,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:2}},
+  {t:"当天就去借了个螺丝刀试试水",s:{P1:1,P2:0,P3:0,D1:0,D2:0,D3:1,E1:3,E2:0,E3:0,R1:3,R2:0,R3:1,S1:0,S2:0,S3:1}}
+ ]},
+{cat:"social",catN:"日常客套",
+ scene:"商量吃什么，朋友说：",
+ quote:"随便，你决定就好，我都行。",
+ ask:"你的下一步？",
+ opts:[
+  {t:"那就我定了，去火锅",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:1,E1:3,E2:0,E3:0,R1:2,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"说「随便」的人最不随便——接下来TA会否定你的每一个提议",s:{P1:3,P2:2,P3:3,D1:3,D2:2,D3:0,E1:1,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:3}},
+  {t:"给三个选项让TA选，这样最安全",s:{P1:2,P2:2,P3:2,D1:2,D2:2,D3:0,E1:2,E2:0,E3:0,R1:0,R2:2,R3:0,S1:0,S2:0,S3:3}},
+  {t:"「你说随便你就吃随便面」",s:{P1:2,P2:1,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:2,R2:0,R3:2,S1:0,S2:0,S3:2}}
+ ]},
+{cat:"social",catN:"日常客套",
+ scene:"你迟到了，朋友笑着说：",
+ quote:"没事没事，我也刚到。",
+ ask:"朋友真的刚到吗？",
+ opts:[
+  {t:"可能真的刚到吧，不用多想",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"世界上最普遍的善意谎言，TA八成等了半小时",s:{P1:3,P2:2,P3:2,D1:3,D2:1,D3:0,E1:1,E2:2,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:3}},
+  {t:"心里有点愧疚，下次一定准时",s:{P1:1,P2:1,P3:1,D1:1,D2:0,D3:0,E1:1,E2:2,E3:1,R1:0,R2:0,R3:0,S1:0,S2:0,S3:1}},
+  {t:"「说实话，你等了多久？」直接拆穿",s:{P1:2,P2:2,P3:2,D1:2,D2:1,D3:0,E1:2,E2:1,E3:0,R1:3,R2:0,R3:1,S1:0,S2:0,S3:2}}
+ ]},
+{cat:"social",catN:"日常客套",
+ scene:"聚餐结束你要买单，朋友说：",
+ quote:"别别别，我来我来！",
+ ask:"你？",
+ opts:[
+  {t:"让给TA付，人家诚心的",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"看动作——嘴上抢但手机没掏出来就是客套",s:{P1:3,P2:3,P3:3,D1:3,D2:2,D3:0,E1:2,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:3}},
+  {t:"两个人互相推二十秒然后AA",s:{P1:2,P2:1,P3:1,D1:1,D2:1,D3:0,E1:2,E2:0,E3:0,R1:1,R2:1,R3:0,S1:0,S2:0,S3:2}},
+  {t:"趁TA客套的时候已经默默扫码付了",s:{P1:2,P2:2,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:3,R2:0,R3:0,S1:0,S2:0,S3:2}}
+ ]},
+{cat:"social",catN:"日常客套",
+ scene:"电梯里碰到不太熟的同事：",
+ quote:"改天一起吃饭啊。",
+ ask:"这顿饭能等来吗？",
+ opts:[
+  {t:"看情况，也许真的会约",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"「改天」= 永远不会到来的那一天",s:{P1:3,P2:2,P3:3,D1:3,D2:1,D3:0,E1:2,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:3}},
+  {t:"也回一句「好啊改天」完成社交仪式",s:{P1:2,P2:1,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:0,R2:3,R3:0,S1:0,S2:0,S3:3}},
+  {t:"「行啊，你看下周三中午怎么样？」钉死TA",s:{P1:1,P2:1,P3:1,D1:1,D2:0,D3:0,E1:3,E2:0,E3:0,R1:3,R2:0,R3:2,S1:0,S2:0,S3:1}}
+ ]},
+{cat:"social",catN:"日常客套",
+ scene:"同事看了你写的方案说：",
+ quote:"挺好的，就是可以再改改细节。",
+ ask:"你觉得这方案到底怎样？",
+ opts:[
+  {t:"总体OK，改改小地方就行",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:1,S2:0,S3:0}},
+  {t:"「细节」是个筐什么都能往里装——问题多半不小",s:{P1:3,P2:2,P3:2,D1:3,D2:2,D3:0,E1:1,E2:0,E3:1,R1:0,R2:0,R3:0,S1:2,S2:0,S3:2}},
+  {t:"追问「具体哪些细节？」让TA说清楚",s:{P1:2,P2:1,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:3,R2:0,R3:1,S1:2,S2:0,S3:1}},
+  {t:"嗯嗯好的谢谢——然后不改",s:{P1:1,P2:0,P3:0,D1:0,D2:0,D3:0,E1:3,E2:0,E3:0,R1:1,R2:2,R3:0,S1:0,S2:0,S3:1}}
+ ]},
+{cat:"social",catN:"日常客套",
+ scene:"聚会上别人听说你的工作后说：",
+ quote:"不错呀，很稳定的。",
+ ask:"你的理解？",
+ opts:[
+  {t:"确实不错，被认可了",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:2,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"「稳定」是找不到别的优点时的万能夸奖",s:{P1:3,P2:2,P3:2,D1:3,D2:2,D3:0,E1:1,E2:0,E3:1,R1:0,R2:0,R3:0,S1:0,S2:0,S3:3}},
+  {t:"呵呵一笑就过了，不值得放心上",s:{P1:2,P2:1,P3:1,D1:1,D2:1,D3:0,E1:2,E2:0,E3:0,R1:0,R2:1,R3:0,S1:0,S2:0,S3:2}},
+  {t:"听出来了，但我就是稳定啊，有问题吗？",s:{P1:2,P2:2,P3:2,D1:2,D2:1,D3:0,E1:3,E2:0,E3:0,R1:2,R2:0,R3:1,S1:0,S2:0,S3:2}}
+ ]},
+{cat:"social",catN:"日常客套",
+ scene:"卖家说：",
+ quote:"你放心，我们老客户回购率可高了。",
+ ask:"你相信吗？",
+ opts:[
+  {t:"回购率高说明质量好，买了",s:{P1:0,P2:0,P3:0,D1:0,D2:0,D3:3,E1:3,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:0}},
+  {t:"你问的是质量，TA答的是回购率——经典偷换概念",s:{P1:3,P2:2,P3:3,D1:3,D2:3,D3:0,E1:2,E2:0,E3:0,R1:0,R2:0,R3:0,S1:0,S2:0,S3:3}},
+  {t:"再看看评论区，卖家说什么都不能全信",s:{P1:2,P2:1,P3:2,D1:2,D2:2,D3:0,E1:2,E2:0,E3:0,R1:2,R2:0,R3:0,S1:0,S2:0,S3:2}},
+  {t:"直接问「有没有质检报告给我看看」",s:{P1:2,P2:1,P3:2,D1:2,D2:1,D3:0,E1:2,E2:0,E3:0,R1:3,R2:0,R3:2,S1:0,S2:0,S3:2}}
+ ]}
+];
+
+// ============================================================
+// 16 PERSONALITY PROFILES
+// Each has ideal dimension ranges (high/low thresholds)
+// ============================================================
+const TYPES = {
+  DEAF:  {code:"DEAF", name:"聋者",  emoji:"🙉",quote:"啊？你刚才说啥？",
+    desc:"你完全活在字面意思的快乐世界里。别人说「改天吃饭」你真的会等那个「改天」，别人说「随便你」你真的以为随便。你不是傻，你是对这个世界保持了一种令人羡慕的天真信任。在一个人人内耗的时代，你的钝感力反而是一种超能力——只不过，偶尔也会被坑。",
+    traits:["字面意思星人","快乐钝感","天真信任","后知后觉冠军","被坑体质"],
+    rare:"常见 · 占比约12%"},
+  GURU:  {code:"GURU", name:"大师",  emoji:"🧘",quote:"你的呼吸告诉了我一切。",
+    desc:"你是弦外之音的终极解码器。领导一个眼神你就知道该闭嘴还是该表态，恋人一声叹气你就知道是委屈还是生气。你能同时听出五层意思，并且精准选择最得体的回应。人人都觉得你特别「会做人」，但只有你自己知道，活得这么通透有多累。",
+    traits:["人形测谎仪","社交导航仪","八面玲珑","累但有用","人间清醒"],
+    rare:"稀有 · 占比约4%"},
+  FAKE:  {code:"FAKE", name:"影帝",  emoji:"🎭",quote:"啊真的吗？我完全没听出来呢~",
+    desc:"你什么都听得懂，但你选择表演「听不懂」。装傻是你的生存策略，也是你的社交艺术。你知道领导在画饼、知道朋友在客套、知道恋人在赌气——但你永远不会第一个戳破。因为你深知：在这个世界上，有时候装不知道比什么都知道活得更好。",
+    traits:["演技派","社交生存大师","心知肚明","装傻充愣","城府深但不害人"],
+    rare:"较常见 · 占比约10%"},
+  BOOM:  {code:"BOOM", name:"炸弹",  emoji:"💣",quote:"你什么意思？？？",
+    desc:"你的弦外之音感知力不错，但你的情绪开关太灵敏了。一听出话里有话，你的第一反应不是分析而是爆炸。领导阴阳你？当场翻脸。朋友讽刺你？原地怼回去。你活得很真实很爽快，但也经常把场面搞得很尴尬——因为有些弦外之音，本来大家是打算装不知道的。",
+    traits:["火药桶","当场翻脸专家","真性情","社交核弹","说话不经过大脑"],
+    rare:"较常见 · 占比约8%"},
+  CPU:   {code:"CPU",  name:"处理器",emoji:"🖥️",quote:"等等让我分析一下这句话。",
+    desc:"你对弦外之音的解码能力极强——问题是，你停不下来。别人随口一句话，你能分析出三种可能的含义、两种潜在动机和一个阴谋论。你的大脑是一台永远不关机的分析引擎，连睡前都在回放白天的对话。你不是在生活，你是在做阅读理解。",
+    traits:["人形分析引擎","过度解读","半夜还在想","阅读理解满分","内耗之王"],
+    rare:"常见 · 占比约11%"},
+  WALL:  {code:"WALL", name:"墙",    emoji:"🧱",quote:"哦。",
+    desc:"你听懂了。然后呢？没有然后。你是情绪的绝缘体，弦外之音的黑洞。别人的暗示、讽刺、试探，到了你这里全部被一个「哦」消化掉。你不是冷血——你只是觉得大多数弦外之音不值得你消耗情绪。这种极致的情绪免疫力让你活得格外省电。",
+    traits:["情绪绝缘体","省电模式","佛系本佛","一个哦打天下","铁壁防御"],
+    rare:"较少见 · 占比约6%"},
+  SNIFF: {code:"SNIFF",name:"狗鼻子",emoji:"🐕",quote:"我闻到了一丝不对劲。",
+    desc:"你有一种近乎动物性的直觉——别人话里有话的时候，你的第六感会疯狂预警。问题是，你的直觉经常误报。领导说「辛苦了」你觉得要裁员，朋友回消息慢了你觉得TA讨厌你了。你永远处于「我觉得哪里不对但我说不上来」的状态。",
+    traits:["第六感战士","误报频繁","疑心病患者","直觉型焦虑","总觉得哪里不对"],
+    rare:"常见 · 占比约9%"},
+  MOM:   {code:"MOM",  name:"老妈子",emoji:"🤱",quote:"TA其实是在说想你了。",
+    desc:"在你的解码系统里，所有的弦外之音最终都会被翻译成「关心」和「爱」。领导说「再想想」= 是为你好；妈妈说「不用回来」= 想你了；朋友说「我尽量」= TA真的会努力。你对世界的善意解读能力满分，虽然有时候会被现实打脸。",
+    traits:["善意解码器","世界滤镜开到最暖","天生共情","容易心软","被PUA高危人群"],
+    rare:"较常见 · 占比约8%"},
+  KNIFE: {code:"KNIFE",name:"刀客",  emoji:"🔪",quote:"你这话我听出三层意思了。",
+    desc:"你是弦外之音的手术刀——不仅能精准解码，还能精准反击。别人阴阳你，你能用更高级的方式阴回去；领导画饼，你能笑着把饼扔回去。你的社交战斗力拉满，但也因此让很多人对你又敬又怕。在你面前说话，大家都会小心翼翼。",
+    traits:["社交手术刀","精准反击","让人又敬又怕","嘴巴很毒","说话带刀"],
+    rare:"较少见 · 占比约5%"},
+  SLEEP: {code:"SLEEP",name:"梦游者",emoji:"😴",quote:"等等，你们刚才在阴阳我？",
+    desc:"你不是听不懂弦外之音——你只是反应慢。别人话里有话的时候，你当场完全没感觉，但过了三个小时（通常是洗澡的时候）突然回过神来：「卧槽TA刚才是在讽刺我？！」你的人生就是一部延迟播放的电影，所有的恍然大悟都来得太晚。",
+    traits:["延迟播放","洗澡时恍然大悟","反射弧绕地球","慢半拍冠军","事后诸葛亮"],
+    rare:"常见 · 占比约10%"},
+  DRAMA: {code:"DRAMA",name:"戏精",  emoji:"🎬",quote:"TA一定是讨厌我了对吧对吧？",
+    desc:"你的弦外之音感知力是有的，但你的脑补能力更强。别人一句普通的话，到了你的脑内剧场里能演出一整季宫斗剧。朋友回消息少了个感叹号你觉得TA生气了，领导路过没看你一眼你觉得要被辞退了。你不是在解读弦外之音，你是在导演弦外大戏。",
+    traits:["脑补大师","内心戏奥斯卡","自编自导自演","一个标点符号的危机","焦虑制造机"],
+    rare:"常见 · 占比约9%"},
+  BUDDHA:{code:"BUDDHA",name:"佛祖", emoji:"🪷",quote:"听懂了，但我选择不在乎。",
+    desc:"你的段位在「大师」之上——因为你不仅听得懂所有弦外之音，而且你选择了不在乎。领导阴阳你？微笑。亲戚催婚？微笑。朋友放鸽子？微笑。不是你没感觉，是你已经过了那个需要证明自己的阶段。你是社交场上的一尊佛，万物不挂心。",
+    traits:["人间已通关","情绪涅槃","看破不说破","万事皆可微笑","已成佛"],
+    rare:"极为稀有 · 占比约3%"},
+  SPY:   {code:"SPY",  name:"间谍",  emoji:"🕵️",quote:"记下了，日后再算账。",
+    desc:"你全听懂了——而且你一个字都不会说。你的脑子里有一个小本本，谁什么时候说了什么话、什么语气、什么表情，全部记录在案。你不是不反击，你是在等一个最合适的时机。在别人以为你没听懂的时候，你已经把棋下到了三步之后。",
+    traits:["社交记忆大师","人形录音机","秋后算账型","城府万丈","深不可测"],
+    rare:"较少见 · 占比约5%"},
+  PARROT:{code:"PARROT",name:"鹦鹉", emoji:"🦜",quote:"你说得对你说得对。",
+    desc:"你的生存策略是永远附和。不管听没听懂弦外之音，你的标准回应都是「对对对」「是是是」「你说得有道理」。你不是真的同意，你只是觉得反驳太累了。你是社交场上最省力的存在——但也因此，没人知道你到底在想什么。",
+    traits:["永远附和","对对对战士","不想吵架","省力模式","你说什么都行"],
+    rare:"较常见 · 占比约7%"},
+  MIRROR:{code:"MIRROR",name:"镜子",emoji:"🪞",quote:"你这话，其实是在说你自己吧？",
+    desc:"你有一种独特的能力：把所有弦外之音反弹回去。别人试图阴阳你的时候，你总能用一句话让对方照见自己。你不是在防御——你是在揭示真相。你相信每个人说出的话，都在某种程度上映射着TA自己的内心。你是社交场上的一面照妖镜。",
+    traits:["人形照妖镜","反弹专家","揭示真相","以彼之道还施彼身","灵魂拷问"],
+    rare:"较少见 · 占比约5%"},
+  GHOST: {code:"GHOST",name:"幽灵",  emoji:"👻",quote:"我在，但我假装不在。",
+    desc:"你在每一个社交场景里都是透明的存在。不是因为你没有能力感知弦外之音，而是你自动选择了退出整个游戏。别人在猜来猜去的时候，你已经精神退场了。你是聚会上刷手机的那个人，是群聊里永远已读不回的那个人，是弦外之音的弃权者。",
+    traits:["社交透明人","精神退场","已读不回","群聊潜水冠军","退出游戏"],
+    rare:"较少见 · 占比约6%"}
+};
+
+// Personality matching weights (dimension importance for each type)
+const TYPE_MATCH = {
+  DEAF:  {P1:-3,P2:-3,P3:-3,D1:-3,D2:-2,D3:3, E1:3, E2:-1,E3:-2,R1:0, R2:-2,R3:0, S1:-2,S2:-2,S3:-2},
+  GURU:  {P1:3, P2:3, P3:3, D1:3, D2:3, D3:-3,E1:2, E2:3, E3:-1,R1:0, R2:2, R3:0, S1:3, S2:3, S3:3},
+  FAKE:  {P1:3, P2:2, P3:2, D1:2, D2:2, D3:-1,E1:2, E2:1, E3:-1,R1:-2,R2:3, R3:-2,S1:2, S2:2, S3:2},
+  BOOM:  {P1:2, P2:2, P3:2, D1:2, D2:1, D3:0, E1:-3,E2:1, E3:1, R1:3, R2:-3,R3:3, S1:1, S2:1, S3:1},
+  CPU:   {P1:2, P2:2, P3:2, D1:2, D2:3, D3:1, E1:-1,E2:1, E3:3, R1:0, R2:0, R3:0, S1:1, S2:2, S3:1},
+  WALL:  {P1:1, P2:1, P3:1, D1:1, D2:0, D3:0, E1:3, E2:-3,E3:-3,R1:0, R2:1, R3:-2,S1:0, S2:0, S3:0},
+  SNIFF: {P1:2, P2:2, P3:3, D1:0, D2:1, D3:2, E1:-1,E2:1, E3:2, R1:0, R2:0, R3:0, S1:1, S2:1, S3:1},
+  MOM:   {P1:1, P2:2, P3:1, D1:0, D2:0, D3:2, E1:2, E2:3, E3:0, R1:0, R2:0, R3:-2,S1:0, S2:2, S3:0},
+  KNIFE: {P1:3, P2:3, P3:3, D1:3, D2:2, D3:-2,E1:1, E2:0, E3:-1,R1:2, R2:-1,R3:3, S1:2, S2:1, S3:2},
+  SLEEP: {P1:-1,P2:-1,P3:-2,D1:1, D2:1, D3:1, E1:1, E2:1, E3:2, R1:-1,R2:1, R3:0, S1:-1,S2:-1,S3:-1},
+  DRAMA: {P1:2, P2:2, P3:2, D1:1, D2:2, D3:3, E1:-2,E2:2, E3:3, R1:0, R2:0, R3:0, S1:1, S2:2, S3:1},
+  BUDDHA:{P1:3, P2:3, P3:3, D1:3, D2:2, D3:-3,E1:3, E2:1, E3:-3,R1:0, R2:2, R3:-2,S1:2, S2:2, S3:2},
+  SPY:   {P1:3, P2:3, P3:3, D1:3, D2:2, D3:-1,E1:2, E2:0, E3:1, R1:-2,R2:3, R3:1, S1:2, S2:1, S3:2},
+  PARROT:{P1:0, P2:0, P3:0, D1:0, D2:0, D3:0, E1:2, E2:0, E3:-1,R1:-2,R2:2, R3:-3,S1:0, S2:0, S3:0},
+  MIRROR:{P1:2, P2:2, P3:2, D1:3, D2:3, D3:-1,E1:2, E2:1, E3:0, R1:2, R2:0, R3:2, S1:1, S2:1, S3:1},
+  GHOST: {P1:1, P2:1, P3:0, D1:0, D2:0, D3:0, E1:2, E2:-2,E3:-1,R1:-3,R2:2, R3:-3,S1:-1,S2:-1,S3:-1}
+};
+
+const DIMS = ['P1','P2','P3','D1','D2','D3','E1','E2','E3','R1','R2','R3','S1','S2','S3'];
+const MODEL_INFO = [
+  {dims:['P1','P2','P3'],name:'感知力',icon:'📡',desc:'你的天线灵不灵'},
+  {dims:['D1','D2','D3'],name:'解码力',icon:'🧠',desc:'猜对了还是猜歪了'},
+  {dims:['E1','E2','E3'],name:'情绪反应',icon:'💥',desc:'听完你炸不炸'},
+  {dims:['R1','R2','R3'],name:'应对策略',icon:'🎭',desc:'装傻还是掀桌'},
+  {dims:['S1','S2','S3'],name:'场景灵敏度',icon:'📍',desc:'你在哪儿最敏锐'}
+];
+const DIM_NAMES = {
+  P1:'语境敏感度',P2:'非言语捕捉',P3:'预警直觉',
+  D1:'意图推理',D2:'多义识别',D3:'误读倾向',
+  E1:'情绪免疫力',E2:'共情深度',E3:'内耗指数',
+  R1:'直球回应',R2:'装傻能力',R3:'反击欲望',
+  S1:'职场灵敏度',S2:'亲密关系灵敏度',S3:'社交灵敏度'
+};
+
+// ===== STATE =====
+let cur = 0, ans = new Array(Q.length).fill(null);
+
+function showPg(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('pg-'+id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'})}
+function startQuiz(){cur=0;ans=new Array(Q.length).fill(null);showPg('quiz');renderQ()}
+
+function renderQ(){
+  const q=Q[cur],a=document.getElementById('q-area');
+  const catCls={work:'cat-work',love:'cat-love',family:'cat-family',social:'cat-social'}[q.cat]||'';
+  let oh=q.opts.map((o,i)=>`<button class="opt${ans[cur]===i?' sel':''}" onclick="selOpt(${i})">${String.fromCharCode(65+i)}. ${o.t}</button>`).join('');
+  a.innerHTML=`<div class="q-card"><span class="q-cat ${catCls}">${q.catN}</span><div class="q-scene">${q.scene}</div><div class="q-quote">"${q.quote}"</div><div class="q-ask">${q.ask}</div><div class="opts">${oh}</div></div>`;
+  document.getElementById('p-num').textContent=`${cur+1}/${Q.length}`;
+  document.getElementById('p-fill').style.width=`${((cur+1)/Q.length)*100}%`;
+  document.getElementById('p-cat').textContent=q.catN;
+  document.getElementById('nb-prev').disabled=cur===0;
+  const nb=document.getElementById('nb-next');
+  if(cur===Q.length-1&&ans[cur]!==null){nb.textContent='查看结果';nb.disabled=false}
+  else{nb.textContent='下一题';nb.disabled=ans[cur]===null}
+}
+
+function selOpt(i){ans[cur]=i;renderQ()}
+function nextQ(){if(cur===Q.length-1&&ans[cur]!==null){showResults();return}if(cur<Q.length-1&&ans[cur]!==null){cur++;renderQ();window.scrollTo({top:0,behavior:'smooth'})}}
+function prevQ(){if(cur>0){cur--;renderQ();window.scrollTo({top:0,behavior:'smooth'})}}
+
+function showResults(){
+  // Calculate dimension scores
+  const dimScores={};DIMS.forEach(d=>dimScores[d]=0);
+  const dimMax={};DIMS.forEach(d=>dimMax[d]=0);
+  Q.forEach((q,i)=>{if(ans[i]!==null){const s=q.opts[ans[i]].s;DIMS.forEach(d=>{dimScores[d]+=s[d]||0;dimMax[d]+=3})}});
+  // Normalize to 0-100
+  const dimPct={};DIMS.forEach(d=>dimPct[d]=dimMax[d]>0?Math.round((dimScores[d]/dimMax[d])*100):0);
+
+  // Match personality type
+  let bestType=null,bestScore=-Infinity;
+  for(let code in TYPE_MATCH){
+    let score=0;
+    DIMS.forEach(d=>{score+=TYPE_MATCH[code][d]*(dimPct[d]/100)});
+    if(score>bestScore){bestScore=score;bestType=code}
+  }
+  const prof=TYPES[bestType];
+
+  // Model scores (avg of 3 dims each)
+  const modelScores=MODEL_INFO.map(m=>{
+    const avg=Math.round(m.dims.reduce((a,d)=>a+dimPct[d],0)/m.dims.length);
+    return{...m,score:avg}
+  });
+
+  // Render
+  const area=document.getElementById('r-area');
+  area.innerHTML=`
+    <div class="r-hero">
+      <span class="r-emoji">${prof.emoji}</span>
+      <div class="r-badge">${prof.code}</div>
+      <div class="r-title">${prof.name}</div>
+      <div class="r-sub">${prof.quote}</div>
+      <div class="r-rare">${prof.rare}</div>
+    </div>
+
+    <div class="r-card">
+      <h3>你的弦外之音人格</h3>
+      <p>${prof.desc}</p>
+      <div class="tags">${prof.traits.map(t=>`<span class="tag-item">#${t}</span>`).join('')}</div>
+    </div>
+
+    <div class="r-card">
+      <h3>五大模型</h3>
+      ${modelScores.map(m=>`<div class="model-row">
+        <div class="model-icon">${m.icon}</div>
+        <div class="model-info"><div class="model-name">${m.name}</div><div class="model-desc">${m.desc}</div></div>
+        <div style="min-width:36px;text-align:right;font-size:13px;font-weight:700;color:var(--primary)">${m.score}%</div>
+        <div class="model-bar"><div class="model-fill" style="width:${m.score}%;background:linear-gradient(90deg,var(--primary),var(--accent))"></div></div>
+      </div>`).join('')}
+    </div>
+
+    <div class="r-card">
+      <h3>15 维度详情</h3>
+      ${DIMS.map(d=>`<div class="dim-group">
+        <div class="dim-label"><span>${DIM_NAMES[d]}</span><span>${dimPct[d]}%</span></div>
+        <div class="dim-track"><div class="dim-fill" style="width:${dimPct[d]}%;background:${dimPct[d]>66?'var(--green)':dimPct[d]>33?'var(--primary)':'var(--red)'}"></div></div>
+      </div>`).join('')}
+    </div>
+
+    <button class="btn" onclick="shareResult('${bestType}')">分享我的结果</button>
+    <button class="btn-outline" onclick="restart()">重新测试</button>
+  `;
+  showPg('result');
+}
+
+function shareResult(code){
+  const p=TYPES[code];
+  const t=`👂 我的弦外之音人格：${p.code}（${p.name}）\n"${p.quote}"\n${p.rare}\n\n你也来测测？`;
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>showToast('已复制到剪贴板！')).catch(()=>showToast('复制失败'))}
+  else{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('已复制到剪贴板！')}
+}
+
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function restart(){cur=0;ans=new Array(Q.length).fill(null);showPg('intro')}
+
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('pg-quiz').classList.contains('active')){
+    if(e.key>='1'&&e.key<='4'){const i=parseInt(e.key)-1;if(i<Q[cur].opts.length)selOpt(i)}
+    if(e.key==='ArrowRight'||e.key==='Enter')nextQ();
+    if(e.key==='ArrowLeft')prevQ()
+  }
+  if(e.key==='Enter'&&document.getElementById('pg-intro').classList.contains('active'))startQuiz()
+});
+</script>
+</body>
+</html>

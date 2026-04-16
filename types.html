@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>16 种弦外之音人格 · 总览</title>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --card: #15151e;
+  --card2: #1c1c2a;
+  --primary: #a78bfa;
+  --accent: #f472b6;
+  --accent2: #fb923c;
+  --green: #34d399;
+  --red: #f87171;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --border: #2a2a3d;
+  --radius: 16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{color:var(--primary);text-decoration:none}
+.container{max-width:760px;margin:0 auto;padding:20px 16px 60px}
+
+/* Header */
+.hdr{text-align:center;padding:40px 0 32px}
+.hdr .logo{font-size:48px;display:block;margin-bottom:8px}
+.hdr h1{font-size:28px;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.hdr p{font-size:14px;color:var(--text2);line-height:1.6;max-width:520px;margin:0 auto 20px}
+.hdr .btn{display:inline-block;padding:12px 32px;font-size:14px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--primary),var(--accent));border:none;border-radius:12px;cursor:pointer;text-decoration:none;transition:all .2s}
+.hdr .btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(167,139,250,.25)}
+
+/* Stats bar */
+.stats{display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap}
+.stat-item{flex:1;min-width:100px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 12px;text-align:center}
+.stat-num{font-size:24px;font-weight:900;color:var(--primary);display:block}
+.stat-label{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* Filter */
+.filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.fbtn{padding:6px 14px;font-size:12px;font-weight:600;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--text2);cursor:pointer;transition:all .15s;font-family:inherit}
+.fbtn:hover,.fbtn.active{border-color:var(--primary);color:var(--primary);background:rgba(167,139,250,.08)}
+
+/* Cards grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:32px}
+.p-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .2s;cursor:pointer;position:relative}
+.p-card:hover{border-color:var(--primary);transform:translateY(-3px);box-shadow:0 8px 24px rgba(167,139,250,.12)}
+.p-top{padding:20px 16px 12px;text-align:center}
+.p-emoji{font-size:40px;display:block;margin-bottom:8px}
+.p-code{font-size:18px;font-weight:900;letter-spacing:3px;color:var(--text);margin-bottom:2px}
+.p-name{font-size:13px;font-weight:600;color:var(--primary);margin-bottom:6px}
+.p-quote{font-size:12px;color:var(--text2);line-height:1.5;font-style:italic}
+.p-foot{padding:8px 16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.p-rare{font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px}
+.rare-common{background:rgba(148,163,184,.1);color:var(--text2)}
+.rare-uncommon{background:rgba(167,139,250,.1);color:var(--primary)}
+.rare-rare{background:rgba(244,114,182,.1);color:var(--accent)}
+.rare-epic{background:rgba(251,146,60,.12);color:var(--accent2)}
+.p-arrow{font-size:12px;color:var(--text2)}
+
+/* Detail modal */
+.modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:1000;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-bg.show{display:flex}
+.modal{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);max-width:580px;width:100%;max-height:90vh;overflow-y:auto;position:relative;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.modal-close{position:absolute;top:12px;right:14px;font-size:20px;color:var(--text2);cursor:pointer;background:none;border:none;z-index:10;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px}
+.modal-close:hover{background:var(--card);color:var(--text)}
+.m-hero{text-align:center;padding:32px 20px 16px}
+.m-emoji{font-size:56px;display:block;margin-bottom:8px}
+.m-badge{display:inline-block;padding:8px 24px;border-radius:20px;font-size:24px;font-weight:900;letter-spacing:5px;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;margin-bottom:8px}
+.m-title{font-size:18px;font-weight:900;margin-bottom:4px}
+.m-quote{font-size:13px;color:var(--text2);font-style:italic;margin-bottom:6px}
+.m-rare{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;margin-bottom:16px}
+.m-section{padding:0 20px 20px}
+.m-section h3{font-size:14px;font-weight:700;color:var(--primary);margin-bottom:10px;padding-top:16px;border-top:1px solid var(--border)}
+.m-section p{font-size:13px;line-height:1.8;color:var(--text2);margin-bottom:10px}
+.m-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.m-tag{padding:4px 12px;border-radius:16px;font-size:11px;font-weight:600;background:rgba(167,139,250,.12);color:var(--primary)}
+
+/* Strengths / Weaknesses */
+.sw-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.sw-box{padding:12px;border-radius:10px;border:1px solid var(--border)}
+.sw-box h4{font-size:12px;font-weight:700;margin-bottom:6px}
+.sw-box.str h4{color:var(--green)}
+.sw-box.wk h4{color:var(--red)}
+.sw-box li{font-size:12px;color:var(--text2);line-height:1.6;list-style:none;padding-left:14px;position:relative}
+.sw-box li::before{content:'';position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%}
+.sw-box.str li::before{background:var(--green)}
+.sw-box.wk li::before{background:var(--red)}
+
+/* Compatibility */
+.compat{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.compat-tag{padding:4px 10px;border-radius:10px;font-size:11px;font-weight:600;border:1px solid var(--border)}
+.compat-good{color:var(--green);border-color:rgba(52,211,153,.3)}
+.compat-bad{color:var(--red);border-color:rgba(248,113,113,.3)}
+
+.m-cta{display:block;width:calc(100% - 40px);margin:0 20px 20px;padding:14px;font-size:14px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--primary),var(--accent));border:none;border-radius:12px;cursor:pointer;text-align:center;text-decoration:none;font-family:inherit}
+.m-cta:hover{box-shadow:0 6px 20px rgba(167,139,250,.25)}
+
+@media(max-width:480px){
+  .hdr h1{font-size:22px}
+  .grid{grid-template-columns:1fr}
+  .sw-grid{grid-template-columns:1fr}
+  .m-badge{font-size:20px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="hdr">
+  <span class="logo">👂</span>
+  <h1>16 种弦外之音人格</h1>
+  <p>从「聋者」到「佛祖」，每一种人格都是你面对话里有话时的真实写照。<br>找找看你是哪一种——或者，先去测一下？</p>
+  <a class="btn" href="index.html">去做测试</a>
+</div>
+
+<div class="stats">
+  <div class="stat-item"><span class="stat-num">16</span><span class="stat-label">人格类型</span></div>
+  <div class="stat-item"><span class="stat-num">15</span><span class="stat-label">评估维度</span></div>
+  <div class="stat-item"><span class="stat-num">5</span><span class="stat-label">核心模型</span></div>
+  <div class="stat-item"><span class="stat-num">40</span><span class="stat-label">测试题目</span></div>
+</div>
+
+<div class="filters">
+  <button class="fbtn active" onclick="filterCards('all')">全部 16 种</button>
+  <button class="fbtn" onclick="filterCards('common')">常见</button>
+  <button class="fbtn" onclick="filterCards('uncommon')">较常见</button>
+  <button class="fbtn" onclick="filterCards('rare')">较少见</button>
+  <button class="fbtn" onclick="filterCards('epic')">稀有</button>
+</div>
+
+<div class="grid" id="card-grid"></div>
+
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-bg" id="modal-bg" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<script>
+const TYPES = [
+  {
+    code:"DEAF",name:"聋者",emoji:"🙉",
+    quote:"啊？你刚才说啥？",
+    rareLabel:"常见",rareClass:"rare-common",rarePct:"约12%",rarity:"common",
+    desc:"你完全活在字面意思的快乐世界里。别人说「改天吃饭」你真的会等那个「改天」，别人说「随便你」你真的以为随便。你不是傻，你是对这个世界保持了一种令人羡慕的天真信任。在一个人人内耗的时代，你的钝感力反而是一种超能力——只不过，偶尔也会被坑。",
+    traits:["字面意思星人","快乐钝感","天真信任","后知后觉冠军","被坑体质"],
+    strengths:["天然抗内耗，心理健康指数高","不会因为一句话纠结三天","身边人觉得你很好相处","快乐指数远超平均水平"],
+    weaknesses:["容易被话术套路","错过很多重要的隐藏信息","有时候让朋友觉得你不上心","在职场可能吃暗亏"],
+    bestMatch:["GURU","FAKE","MOM"],
+    worstMatch:["KNIFE","SPY","DRAMA"],
+    advice:"不需要变成一个疑神疑鬼的人。但下次别人说「你自己决定就好」的时候，至少多想三秒钟。",
+    dimHighlight:"感知维度极低，情绪免疫力极高",
+    model:{perception:"低",decode:"低",emotion:"极稳",response:"被动",scene:"均低"}
+  },
+  {
+    code:"GURU",name:"大师",emoji:"🧘",
+    quote:"你的呼吸告诉了我一切。",
+    rareLabel:"稀有",rareClass:"rare-rare",rarePct:"约4%",rarity:"epic",
+    desc:"你是弦外之音的终极解码器。领导一个眼神你就知道该闭嘴还是该表态，恋人一声叹气你就知道是委屈还是生气。你能同时听出五层意思，并且精准选择最得体的回应。人人都觉得你特别「会做人」，但只有你自己知道，活得这么通透有多累。",
+    traits:["人形测谎仪","社交导航仪","八面玲珑","累但有用","人间清醒"],
+    strengths:["几乎不会被人话术忽悠","在任何社交场合都游刃有余","朋友遇事第一个想找你分析","职场政治雷达满格"],
+    weaknesses:["太累了，有时候想关掉自己的雷达","看透太多反而容易对人失望","朋友觉得你什么都懂压力很大","容易过度共情别人的情绪"],
+    bestMatch:["DEAF","WALL","BUDDHA"],
+    worstMatch:["CPU","DRAMA","SNIFF"],
+    advice:"你已经够通透了。现在的课题不是看得更清，而是学会选择性失明——有些弦外之音，不值得你消耗能量去解码。",
+    dimHighlight:"全维度高分，解码力和感知力拉满",
+    model:{perception:"极高",decode:"极高",emotion:"稳定",response:"圆滑",scene:"均高"}
+  },
+  {
+    code:"FAKE",name:"影帝",emoji:"🎭",
+    quote:"啊真的吗？我完全没听出来呢~",
+    rareLabel:"较常见",rareClass:"rare-uncommon",rarePct:"约10%",rarity:"uncommon",
+    desc:"你什么都听得懂，但你选择表演「听不懂」。装傻是你的生存策略，也是你的社交艺术。你知道领导在画饼、知道朋友在客套、知道恋人在赌气——但你永远不会第一个戳破。因为你深知：在这个世界上，有时候装不知道比什么都知道活得更好。",
+    traits:["演技派","社交生存大师","心知肚明","装傻充愣","城府深但不害人"],
+    strengths:["在复杂的人际关系中如鱼得水","不会因为说错话得罪人","保全自己的同时也保全了别人的面子","职场存活率极高"],
+    weaknesses:["长期装傻可能让人觉得你没主见","有时候错过了应该直说的时机","自己累，因为一直在演","亲密关系中可能让对方觉得你不真诚"],
+    bestMatch:["BOOM","KNIFE","DEAF"],
+    worstMatch:["SPY","MIRROR","DRAMA"],
+    advice:"装傻是保护色，但不是铠甲。在你真正在乎的人面前，偶尔卸下面具，让他们看到真实的你。",
+    dimHighlight:"感知高、装傻能力拉满、直球回应极低",
+    model:{perception:"高",decode:"高",emotion:"稳定",response:"装傻型",scene:"均高"}
+  },
+  {
+    code:"BOOM",name:"炸弹",emoji:"💣",
+    quote:"你什么意思？？？",
+    rareLabel:"较常见",rareClass:"rare-uncommon",rarePct:"约8%",rarity:"uncommon",
+    desc:"你的弦外之音感知力不错，但你的情绪开关太灵敏了。一听出话里有话，你的第一反应不是分析而是爆炸。领导阴阳你？当场翻脸。朋友讽刺你？原地怼回去。你活得很真实很爽快，但也经常把场面搞得很尴尬——因为有些弦外之音，本来大家是打算装不知道的。",
+    traits:["火药桶","当场翻脸专家","真性情","社交核弹","说话不经过大脑"],
+    strengths:["没人敢随便阴阳你","活得真实不憋屈","朋友知道你是直性子所以信任你","解决问题效率高不拖泥带水"],
+    weaknesses:["容易把小事搞大","在职场很容易得罪领导","有时候伤害了不该伤害的人","冲动过后经常后悔"],
+    bestMatch:["FAKE","WALL","PARROT"],
+    worstMatch:["BOOM","KNIFE","DRAMA"],
+    advice:"下次想爆炸之前，给自己三秒钟。不是所有的弦外之音都值得你用核弹回应——有些用一个微笑就够了。",
+    dimHighlight:"感知中高、情绪免疫力极低、反击欲望拉满",
+    model:{perception:"中高",decode:"中",emotion:"极不稳",response:"直球型",scene:"中等"}
+  },
+  {
+    code:"CPU",name:"处理器",emoji:"🖥️",
+    quote:"等等让我分析一下这句话。",
+    rareLabel:"常见",rareClass:"rare-common",rarePct:"约11%",rarity:"common",
+    desc:"你对弦外之音的解码能力极强——问题是，你停不下来。别人随口一句话，你能分析出三种可能的含义、两种潜在动机和一个阴谋论。你的大脑是一台永远不关机的分析引擎，连睡前都在回放白天的对话。你不是在生活，你是在做阅读理解。",
+    traits:["人形分析引擎","过度解读","半夜还在想","阅读理解满分","内耗之王"],
+    strengths:["分析能力强，很少被表面话术骗到","能看到别人看不到的细节","朋友找你分析问题总能得到深度解读","做决策时考虑周全"],
+    weaknesses:["严重内耗，心理负担重","经常把简单的事想复杂","分析完了反而不知道该怎么做","睡眠质量堪忧"],
+    bestMatch:["WALL","DEAF","PARROT"],
+    worstMatch:["CPU","DRAMA","SNIFF"],
+    advice:"你的大脑需要一个关机按钮。试试这个：如果一句话分析超过 10 分钟还没结论，那它大概率不值得分析。",
+    dimHighlight:"解码力极高、多义识别拉满、内耗指数爆表",
+    model:{perception:"高",decode:"极高",emotion:"内耗型",response:"被动",scene:"中高"}
+  },
+  {
+    code:"WALL",name:"墙",emoji:"🧱",
+    quote:"哦。",
+    rareLabel:"较少见",rareClass:"rare-rare",rarePct:"约6%",rarity:"rare",
+    desc:"你听懂了。然后呢？没有然后。你是情绪的绝缘体，弦外之音的黑洞。别人的暗示、讽刺、试探，到了你这里全部被一个「哦」消化掉。你不是冷血——你只是觉得大多数弦外之音不值得你消耗情绪。这种极致的情绪免疫力让你活得格外省电。",
+    traits:["情绪绝缘体","省电模式","佛系本佛","一个哦打天下","铁壁防御"],
+    strengths:["几乎不会被别人的话影响心情","抗压能力极强","永远不会因为一句话失眠","别人吵架你能在旁边吃瓜"],
+    weaknesses:["亲密的人觉得你冷漠","可能错过别人真正需要你关注的信号","被误解为不在乎","情感需求容易被忽视"],
+    bestMatch:["BOOM","DRAMA","CPU"],
+    worstMatch:["MOM","SNIFF","MIRROR"],
+    advice:"你的防御很好，但别把所有频道都屏蔽了。有些人的弦外之音，是因为太在乎你才不好意思直说。",
+    dimHighlight:"情绪免疫力极高、共情深度极低、内耗指数极低",
+    model:{perception:"中",decode:"中",emotion:"绝缘",response:"被动",scene:"均低"}
+  },
+  {
+    code:"SNIFF",name:"狗鼻子",emoji:"🐕",
+    quote:"我闻到了一丝不对劲。",
+    rareLabel:"常见",rareClass:"rare-common",rarePct:"约9%",rarity:"common",
+    desc:"你有一种近乎动物性的直觉——别人话里有话的时候，你的第六感会疯狂预警。问题是，你的直觉经常误报。领导说「辛苦了」你觉得要裁员，朋友回消息慢了你觉得TA讨厌你了。你永远处于「我觉得哪里不对但我说不上来」的状态。",
+    traits:["第六感战士","误报频繁","疑心病患者","直觉型焦虑","总觉得哪里不对"],
+    strengths:["偶尔直觉是对的，能提前避坑","对危险信号比别人更敏感","在需要警觉的场合很有用","能察觉到大部分人忽略的微妙变化"],
+    weaknesses:["长期焦虑状态很伤身","经常冤枉好人","朋友觉得你太敏感了","浪费大量精力在错误预警上"],
+    bestMatch:["WALL","GURU","FAKE"],
+    worstMatch:["SNIFF","CPU","DRAMA"],
+    advice:"你的雷达很灵，但需要校准。下次「闻到不对劲」的时候，先找三个反面证据再下结论。",
+    dimHighlight:"预警直觉极高、误读倾向高、意图推理一般",
+    model:{perception:"高",decode:"低",emotion:"焦虑型",response:"被动",scene:"中等"}
+  },
+  {
+    code:"MOM",name:"老妈子",emoji:"🤱",
+    quote:"TA其实是在说想你了。",
+    rareLabel:"较常见",rareClass:"rare-uncommon",rarePct:"约8%",rarity:"uncommon",
+    desc:"在你的解码系统里，所有的弦外之音最终都会被翻译成「关心」和「爱」。领导说「再想想」= 是为你好；妈妈说「不用回来」= 想你了；朋友说「我尽量」= TA真的会努力。你对世界的善意解读能力满分，虽然有时候会被现实打脸。",
+    traits:["善意解码器","世界滤镜开到最暖","天生共情","容易心软","被PUA高危人群"],
+    strengths:["身边人觉得你特别暖特别好","能读懂别人隐藏的善意","情感关系中是最好的倾听者","让人感到被理解和被接纳"],
+    weaknesses:["容易被有心人利用","分不清真正的关心和表面的客套","在需要防备的时候放了太多信任","经常为别人操心超过为自己"],
+    bestMatch:["KNIFE","WALL","BOOM"],
+    worstMatch:["MOM","FAKE","SPY"],
+    advice:"善良是你的超能力，但请给自己也留一份。不是所有人说的话都值得你用最善意的方式去解读。",
+    dimHighlight:"共情深度极高、误读倾向偏善意、情绪免疫力中等",
+    model:{perception:"中",decode:"偏善意",emotion:"共情型",response:"被动",scene:"亲密关系高"}
+  },
+  {
+    code:"KNIFE",name:"刀客",emoji:"🔪",
+    quote:"你这话我听出三层意思了。",
+    rareLabel:"较少见",rareClass:"rare-rare",rarePct:"约5%",rarity:"rare",
+    desc:"你是弦外之音的手术刀——不仅能精准解码，还能精准反击。别人阴阳你，你能用更高级的方式阴回去；领导画饼，你能笑着把饼扔回去。你的社交战斗力拉满，但也因此让很多人对你又敬又怕。在你面前说话，大家都会小心翼翼。",
+    traits:["社交手术刀","精准反击","让人又敬又怕","嘴巴很毒","说话带刀"],
+    strengths:["没人敢在你面前耍花招","社交博弈中几乎不输","说话精准有力，谈判能力强","能帮朋友出气"],
+    weaknesses:["让人不敢靠近你","说话太狠容易伤人心","朋友可能怕你而不是信任你","在需要温柔的时候很难切换"],
+    bestMatch:["MOM","DEAF","PARROT"],
+    worstMatch:["KNIFE","BOOM","MIRROR"],
+    advice:"刀太锋利了。下次想反击之前想想：这一刀下去，对方还站不站得起来？有些人值得你收刀。",
+    dimHighlight:"全维度高分、反击欲望拉满、装傻能力低",
+    model:{perception:"极高",decode:"极高",emotion:"稳定",response:"攻击型",scene:"均高"}
+  },
+  {
+    code:"SLEEP",name:"梦游者",emoji:"😴",
+    quote:"等等，你们刚才在阴阳我？",
+    rareLabel:"常见",rareClass:"rare-common",rarePct:"约10%",rarity:"common",
+    desc:"你不是听不懂弦外之音——你只是反应慢。别人话里有话的时候，你当场完全没感觉，但过了三个小时（通常是洗澡的时候）突然回过神来：「卧槽TA刚才是在讽刺我？！」你的人生就是一部延迟播放的电影，所有的恍然大悟都来得太晚。",
+    traits:["延迟播放","洗澡时恍然大悟","反射弧绕地球","慢半拍冠军","事后诸葛亮"],
+    strengths:["当场不会尴尬因为当场没听懂","不会冲动说错话","给自己留了冷静期","意外地避免了很多冲突"],
+    weaknesses:["错过了最佳回应时机","事后的恍然大悟只会让自己更难受","别人以为你没听懂其实你只是延迟了","夜间内耗严重"],
+    bestMatch:["GURU","FAKE","KNIFE"],
+    worstMatch:["SLEEP","CPU","DRAMA"],
+    advice:"既然你的解码器是延迟型的，不如接受它。重要的对话，可以给自己一句万能回复：「让我想想再回你」。",
+    dimHighlight:"感知低、解码中等但延迟、内耗中高",
+    model:{perception:"低",decode:"中(延迟)",emotion:"事后型",response:"被动",scene:"均低"}
+  },
+  {
+    code:"DRAMA",name:"戏精",emoji:"🎬",
+    quote:"TA一定是讨厌我了对吧对吧？",
+    rareLabel:"常见",rareClass:"rare-common",rarePct:"约9%",rarity:"common",
+    desc:"你的弦外之音感知力是有的，但你的脑补能力更强。别人一句普通的话，到了你的脑内剧场里能演出一整季宫斗剧。朋友回消息少了个感叹号你觉得TA生气了，领导路过没看你一眼你觉得要被辞退了。你不是在解读弦外之音，你是在导演弦外大戏。",
+    traits:["脑补大师","内心戏奥斯卡","自编自导自演","一个标点符号的危机","焦虑制造机"],
+    strengths:["想象力丰富适合做创意工作","对细节的关注度极高","在真正有危险的时候反应最快","写小说一定很好看"],
+    weaknesses:["把简单事情复杂化的能力一流","社交压力巨大","经常自己吓自己","身边人觉得你太累了"],
+    bestMatch:["WALL","DEAF","BUDDHA"],
+    worstMatch:["DRAMA","SNIFF","CPU"],
+    advice:"你脑子里的剧场需要一个关灯按钮。下次脑补之前问自己：这件事有没有第三种、更无聊的解释？大多数时候，答案是对方根本没想那么多。",
+    dimHighlight:"多义识别极高、误读倾向极高、内耗指数爆表",
+    model:{perception:"中高",decode:"过度型",emotion:"焦虑型",response:"被动",scene:"亲密关系高"}
+  },
+  {
+    code:"BUDDHA",name:"佛祖",emoji:"🪷",
+    quote:"听懂了，但我选择不在乎。",
+    rareLabel:"极为稀有",rareClass:"rare-epic",rarePct:"约3%",rarity:"epic",
+    desc:"你的段位在「大师」之上——因为你不仅听得懂所有弦外之音，而且你选择了不在乎。领导阴阳你？微笑。亲戚催婚？微笑。朋友放鸽子？微笑。不是你没感觉，是你已经过了那个需要证明自己的阶段。你是社交场上的一尊佛，万物不挂心。",
+    traits:["人间已通关","情绪涅槃","看破不说破","万事皆可微笑","已成佛"],
+    strengths:["心理健康指数断层第一","不会被任何人的话影响","活得极其自洽","散发一种让人安心的气场"],
+    weaknesses:["有时候显得太淡漠","别人不确定你到底在不在乎","在需要表态的时候可能太佛了","可能让在乎你的人感到距离感"],
+    bestMatch:["DRAMA","BOOM","CPU"],
+    worstMatch:["BUDDHA","GHOST","WALL"],
+    advice:"你已经没什么需要别人提醒的了。唯一的建议是：偶尔允许自己「在乎」一下，不是所有的超脱都是进步。",
+    dimHighlight:"全维高、情绪免疫力极高、内耗极低、反击欲望极低",
+    model:{perception:"极高",decode:"极高",emotion:"涅槃",response:"佛系",scene:"均高"}
+  },
+  {
+    code:"SPY",name:"间谍",emoji:"🕵️",
+    quote:"记下了，日后再算账。",
+    rareLabel:"较少见",rareClass:"rare-rare",rarePct:"约5%",rarity:"rare",
+    desc:"你全听懂了——而且你一个字都不会说。你的脑子里有一个小本本，谁什么时候说了什么话、什么语气、什么表情，全部记录在案。你不是不反击，你是在等一个最合适的时机。在别人以为你没听懂的时候，你已经把棋下到了三步之后。",
+    traits:["社交记忆大师","人形录音机","秋后算账型","城府万丈","深不可测"],
+    strengths:["从不打无准备之仗","记忆力惊人用在正事上很厉害","在关键时刻能翻出决定性的证据","没人知道你到底知道多少"],
+    weaknesses:["活得太有心机容易孤独","朋友如果知道你在记账会害怕","长期憋着不说容易内伤","可能错过了当场解决问题的机会"],
+    bestMatch:["DEAF","BOOM","PARROT"],
+    worstMatch:["SPY","FAKE","MIRROR"],
+    advice:"小本本记着可以，但别让它变成你的负担。有些账，过了保质期就不值得算了。",
+    dimHighlight:"感知极高、装傻能力高、反击欲望中（延迟释放）",
+    model:{perception:"极高",decode:"高",emotion:"隐忍型",response:"延迟攻击",scene:"均高"}
+  },
+  {
+    code:"PARROT",name:"鹦鹉",emoji:"🦜",
+    quote:"你说得对你说得对。",
+    rareLabel:"较常见",rareClass:"rare-uncommon",rarePct:"约7%",rarity:"uncommon",
+    desc:"你的生存策略是永远附和。不管听没听懂弦外之音，你的标准回应都是「对对对」「是是是」「你说得有道理」。你不是真的同意，你只是觉得反驳太累了。你是社交场上最省力的存在——但也因此，没人知道你到底在想什么。",
+    traits:["永远附和","对对对战士","不想吵架","省力模式","你说什么都行"],
+    strengths:["永远不会因为发表意见得罪人","在任何社交场合都能存活","朋友觉得你人好好","冲突永远绕着你走"],
+    weaknesses:["存在感极低","自己的需求长期被忽视","可能被强势的人当工具人","真正有想法的时候没人听"],
+    bestMatch:["KNIFE","BOOM","MIRROR"],
+    worstMatch:["PARROT","GHOST","WALL"],
+    advice:"「你说得对」不是万能的。练习一下在安全的环境里说「我不这么觉得」——你会发现天不会塌下来的。",
+    dimHighlight:"全维度中低、装傻能力高、直球回应极低",
+    model:{perception:"低",decode:"低",emotion:"稳定",response:"附和型",scene:"均低"}
+  },
+  {
+    code:"MIRROR",name:"镜子",emoji:"🪞",
+    quote:"你这话，其实是在说你自己吧？",
+    rareLabel:"较少见",rareClass:"rare-rare",rarePct:"约5%",rarity:"rare",
+    desc:"你有一种独特的能力：把所有弦外之音反弹回去。别人试图阴阳你的时候，你总能用一句话让对方照见自己。你不是在防御——你是在揭示真相。你相信每个人说出的话，都在某种程度上映射着TA自己的内心。你是社交场上的一面照妖镜。",
+    traits:["人形照妖镜","反弹专家","揭示真相","以彼之道还施彼身","灵魂拷问"],
+    strengths:["让试图阴阳你的人自讨没趣","洞察力极强能看透人心","在辩论和谈判中很有优势","帮朋友看清关系中的本质"],
+    weaknesses:["有时候太犀利让人不舒服","不是每个场合都适合当镜子","可能让善意的话也变得尴尬","别人会觉得跟你说话有压力"],
+    bestMatch:["PARROT","MOM","SLEEP"],
+    worstMatch:["MIRROR","KNIFE","SPY"],
+    advice:"镜子的力量在于真实，但真实也需要选择时机。不是每个人都准备好了看到自己的真相。",
+    dimHighlight:"意图推理极高、多义识别高、直球回应和反击都高",
+    model:{perception:"高",decode:"极高",emotion:"稳定",response:"反弹型",scene:"均高"}
+  },
+  {
+    code:"GHOST",name:"幽灵",emoji:"👻",
+    quote:"我在，但我假装不在。",
+    rareLabel:"较少见",rareClass:"rare-rare",rarePct:"约6%",rarity:"rare",
+    desc:"你在每一个社交场景里都是透明的存在。不是因为你没有能力感知弦外之音，而是你自动选择了退出整个游戏。别人在猜来猜去的时候，你已经精神退场了。你是聚会上刷手机的那个人，是群聊里永远已读不回的那个人，是弦外之音的弃权者。",
+    traits:["社交透明人","精神退场","已读不回","群聊潜水冠军","退出游戏"],
+    strengths:["完全不受社交压力的影响","自己的时间和精力保护得很好","不参与八卦不卷入纷争","有一种让人羡慕的自在"],
+    weaknesses:["重要的社交信号也被你屏蔽了","朋友觉得你不够投入","可能错过很多有价值的关系","被误解为高冷或不合群"],
+    bestMatch:["BOOM","DRAMA","MOM"],
+    worstMatch:["GHOST","PARROT","WALL"],
+    advice:"退出游戏是你的权利，但有些游戏值得参加。至少在你在乎的人面前，试着打开接收器。",
+    dimHighlight:"全维度偏低、情绪免疫高但共情极低、直球和反击都极低",
+    model:{perception:"中低",decode:"中低",emotion:"隔离型",response:"弃权",scene:"均低"}
+  }
+];
+
+// Render cards
+function renderCards(filter){
+  const grid=document.getElementById('card-grid');
+  const list=filter==='all'?TYPES:TYPES.filter(t=>t.rarity===filter);
+  grid.innerHTML=list.map(t=>`
+    <div class="p-card" onclick="openModal('${t.code}')">
+      <div class="p-top">
+        <span class="p-emoji">${t.emoji}</span>
+        <div class="p-code">${t.code}</div>
+        <div class="p-name">${t.name}</div>
+        <div class="p-quote">"${t.quote}"</div>
+      </div>
+      <div class="p-foot">
+        <span class="p-rare ${t.rareClass}">${t.rareLabel} · ${t.rarePct}</span>
+        <span class="p-arrow">查看详情 →</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterCards(f){
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderCards(f);
+}
+
+function openModal(code){
+  const t=TYPES.find(x=>x.code===code);
+  if(!t)return;
+  const m=document.getElementById('modal-content');
+  m.innerHTML=`
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div class="m-hero">
+      <span class="m-emoji">${t.emoji}</span>
+      <div class="m-badge">${t.code}</div>
+      <div class="m-title">${t.name}</div>
+      <div class="m-quote">"${t.quote}"</div>
+      <span class="m-rare ${t.rareClass}">${t.rareLabel} · ${t.rarePct}</span>
+    </div>
+    <div class="m-section">
+      <h3>人格画像</h3>
+      <p>${t.desc}</p>
+      <div class="m-tags">${t.traits.map(x=>`<span class="m-tag">#${x}</span>`).join('')}</div>
+    </div>
+    <div class="m-section">
+      <h3>优势与短板</h3>
+      <div class="sw-grid">
+        <div class="sw-box str"><h4>优势</h4><ul>${t.strengths.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+        <div class="sw-box wk"><h4>短板</h4><ul>${t.weaknesses.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      </div>
+    </div>
+    <div class="m-section">
+      <h3>维度特征</h3>
+      <p style="font-size:12px;color:var(--accent)">${t.dimHighlight}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+        <span class="m-tag">感知：${t.model.perception}</span>
+        <span class="m-tag">解码：${t.model.decode}</span>
+        <span class="m-tag">情绪：${t.model.emotion}</span>
+        <span class="m-tag">应对：${t.model.response}</span>
+        <span class="m-tag">场景：${t.model.scene}</span>
+      </div>
+    </div>
+    <div class="m-section">
+      <h3>人格关系</h3>
+      <div class="compat">
+        ${t.bestMatch.map(x=>`<span class="compat-tag compat-good">❤️ ${x}</span>`).join('')}
+        ${t.worstMatch.map(x=>`<span class="compat-tag compat-bad">⚡ ${x}</span>`).join('')}
+      </div>
+      <p style="font-size:11px;color:var(--text2)">❤️ = 最佳搭配 &nbsp; ⚡ = 容易冲突</p>
+    </div>
+    <div class="m-section">
+      <h3>给你的一句话</h3>
+      <p style="font-style:italic;color:var(--accent)">"${t.advice}"</p>
+    </div>
+    <a class="m-cta" href="index.html">测测你是哪种人格</a>
+  `;
+  document.getElementById('modal-bg').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('modal-bg').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+// Init
+renderCards('all');
+</script>
+</body>
+</html>
